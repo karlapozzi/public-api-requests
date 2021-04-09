@@ -2,7 +2,6 @@
 const searchContainer = document.getElementsByClassName('search-container')[0];
 const gallery = document.getElementsByClassName('gallery')[0];
 const randomUserAPI = `https://randomuser.me/api/?results=12&nat=US`;
-const HTMLbody = document.getElementsByTagName('body')[0];
 const modalDiv = document.createElement('div');
 modalDiv.className = 'modal-container';
 modalDiv.style.display = 'none';
@@ -46,6 +45,8 @@ function createGallery(array) {
 //Create modals
 function createModal(employee) {
   modalDiv.style.display = 'flex';
+  let bday = new Date(employee.dob.date);
+  let formattedBday = `${(bday.getMonth() + 1)}/${bday.getDate()}/${bday.getFullYear()}`
   const modalHTML = `
     <div class="modal">
       <button type="button" id="modal-close-btn" class="modal-close-btn"><strong>X</strong></button>
@@ -58,13 +59,12 @@ function createModal(employee) {
           <p class="modal-text">${employee.cell}</p>
           <p class="modal-text">${employee.location.street.number} ${employee.location.street.name}, 
               ${employee.location.city}, ${employee.location.state} ${employee.location.postcode}</p>
-          <p class="modal-text">Birthday: ${employee.dob.date}</p>
+          <p class="modal-text">Birthday: ${formattedBday}</p>
         </div>
     </div>
   `;
   modalDiv.innerHTML =modalHTML;
   gallery.insertAdjacentElement('afterend', modalDiv);
-  console.log(modalDiv);
 
   //Listen for clicks to close modal
   document.getElementById('modal-close-btn').addEventListener('click', () => {
