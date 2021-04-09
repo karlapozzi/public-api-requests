@@ -2,6 +2,10 @@
 const searchContainer = document.getElementsByClassName('search-container')[0];
 const gallery = document.getElementsByClassName('gallery')[0];
 const randomUserAPI = `https://randomuser.me/api/?results=12&nat=US`;
+const HTMLbody = document.getElementsByTagName('body')[0];
+const modalDiv = document.createElement('div');
+modalDiv.className = 'modal-container';
+modalDiv.style.display = 'none';
 let employeeData = [];
 
 //Add search element
@@ -41,25 +45,32 @@ function createGallery(array) {
 
 //Create modals
 function createModal(employee) {
+  modalDiv.style.display = 'flex';
   const modalHTML = `
-    <div class="modal-container">
-      <div class="modal">
-        <button type="button" id="modal-close-btn" class="modal-close-btn"><strong>X</strong></button>
-          <div class="modal-info-container">
-            <img class="modal-img" src="${employee.picture.large}" alt="profile picture">
-            <h3 id="name" class="modal-name cap">${employee.name.first} ${employee.name.last}</h3>
-            <p class="modal-text">${employee.email}</p>
-            <p class="modal-text cap">${employee.location.city}</p>
-            <hr>
-            <p class="modal-text">${employee.cell}</p>
-            <p class="modal-text">${employee.location.street.number} ${employee.location.street.name}, 
-                ${employee.location.city}, ${employee.location.state} ${employee.location.postcode}</p>
-            <p class="modal-text">Birthday: ${employee.dob.date}</p>
-          </div>
-      </div>
+    <div class="modal">
+      <button type="button" id="modal-close-btn" class="modal-close-btn"><strong>X</strong></button>
+        <div class="modal-info-container">
+          <img class="modal-img" src="${employee.picture.large}" alt="profile picture">
+          <h3 id="name" class="modal-name cap">${employee.name.first} ${employee.name.last}</h3>
+          <p class="modal-text">${employee.email}</p>
+          <p class="modal-text cap">${employee.location.city}</p>
+          <hr>
+          <p class="modal-text">${employee.cell}</p>
+          <p class="modal-text">${employee.location.street.number} ${employee.location.street.name}, 
+              ${employee.location.city}, ${employee.location.state} ${employee.location.postcode}</p>
+          <p class="modal-text">Birthday: ${employee.dob.date}</p>
+        </div>
     </div>
   `;
-  gallery.insertAdjacentHTML('beforeend', modalHTML);
+  modalDiv.innerHTML =modalHTML;
+  gallery.insertAdjacentElement('afterend', modalDiv);
+  console.log(modalDiv);
+
+  //Listen for clicks to close modal
+  document.getElementById('modal-close-btn').addEventListener('click', () => {
+    modalDiv.style.display = 'none';
+  });
+
 }
 
 //Show modal function
@@ -92,12 +103,4 @@ function search(text) {
 //Listen for searches
 document.getElementById('search-input').addEventListener('keyup', (event) => {
   search(event.target.value);
-});
-
-//Listen for clicks to close modal
-document.getElementsByClassName('modal')[0].addEventListener('click', (event) => {
-  if (event.target.tagName === 'BUTTON') {
-    console.log('button clicked');
-    console.log(event.target);
-  }
 });
