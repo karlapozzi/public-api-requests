@@ -44,9 +44,25 @@ function createGallery(array) {
 
 //Create modals
 function createModal(employee) {
+  //show the hidden modal div
   modalDiv.style.display = 'flex';
+
+  //format the employee's birthday
   let bday = new Date(employee.dob.date);
-  let formattedBday = `${(bday.getMonth() + 1)}/${bday.getDate()}/${bday.getFullYear()}`
+  let formattedBday = `${(bday.getMonth() + 1)}/${bday.getDate()}/${bday.getFullYear()}`;
+
+  //Function to replace dash in phone number with a space
+  //Found via google search here: http://www.openjs.com/scripts/strings/setcharat_function.php
+  function setCharAt(str,index,chr) {
+    if(index > str.length-1) return str;
+    return str.substr(0,index) + chr + str.substr(index+1);
+  }
+
+  //format the employee's phone number using function above 
+  let cell = `${employee.cell}`;
+  formattedCell = setCharAt(cell, 5, ' ');
+
+  //create modal HTML with employee info
   const modalHTML = `
     <div class="modal">
       <button type="button" id="modal-close-btn" class="modal-close-btn"><strong>X</strong></button>
@@ -56,13 +72,15 @@ function createModal(employee) {
           <p class="modal-text">${employee.email}</p>
           <p class="modal-text cap">${employee.location.city}</p>
           <hr>
-          <p class="modal-text">${employee.cell}</p>
+          <p class="modal-text">${formattedCell}</p>
           <p class="modal-text">${employee.location.street.number} ${employee.location.street.name}, 
               ${employee.location.city}, ${employee.location.state} ${employee.location.postcode}</p>
           <p class="modal-text">Birthday: ${formattedBday}</p>
         </div>
     </div>
   `;
+
+  //Add the html to the modal div and then add that div as an element directly after the gallery
   modalDiv.innerHTML =modalHTML;
   gallery.insertAdjacentElement('afterend', modalDiv);
 
@@ -73,11 +91,11 @@ function createModal(employee) {
 
 }
 
+
 //Show modal function
 function showModal(array) {
   for (let i = 0; i < gallery.children.length; i++) {
     gallery.children[i].addEventListener('click', (event) => {
-      console.log(array[i]);
       createModal(array[i]);
     });
   }
