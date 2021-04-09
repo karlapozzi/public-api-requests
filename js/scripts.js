@@ -1,11 +1,15 @@
 //VARIABLES 
+//DOM elements I need to point to 
 const searchContainer = document.getElementsByClassName('search-container')[0];
 const gallery = document.getElementsByClassName('gallery')[0];
-const randomUserAPI = `https://randomuser.me/api/?results=12&nat=US`;
+const randomUserAPI = `https://randomuser.me/api/?results=12&nat=US`; //12 results + US format so search works
+//Create a div for the modal
 const modalDiv = document.createElement('div');
 modalDiv.className = 'modal-container';
 modalDiv.style.display = 'none';
+//A placeholder for the data that will be returned 
 let employeeData = [];
+
 
 //Add search element
 const searchHTML = `
@@ -16,17 +20,23 @@ const searchHTML = `
 `;
 searchContainer.insertAdjacentHTML('beforeend', searchHTML);
 
+
 //Get employee info 
 fetch(randomUserAPI)
+  //Convert data to JSON
   .then(response => response.json())
   .then(data => {
+    //Save data in array so it can be used other places
     employeeData = data.results;
+    //Create initial gallery of employees
     createGallery(employeeData);
+    //Add event listeners to the gallery elements, using the same array, so corresponding modal shows when clicked 
     showModal(employeeData);
   })
 
 //Create gallery
 function createGallery(array) {
+  //Creates HTML gallery elements
   const galleryHTML = array.map(employee => `
     <div class="card">
       <div class="card-img-container">
@@ -42,7 +52,18 @@ function createGallery(array) {
   gallery.insertAdjacentHTML('beforeend', galleryHTML);
 }
 
-//Create modals
+//Show modal function
+function showModal(array) {
+  for (let i = 0; i < gallery.children.length; i++) {
+    //Add event listener to each gallery element 
+    gallery.children[i].addEventListener('click', () => {
+      //Create corresponding modal when gallery item is clicked 
+      createModal(array[i]);
+    });
+  }
+}
+
+//Create modal (called in the showModal function)
 function createModal(employee) {
   //show the hidden modal div
   modalDiv.style.display = 'flex';
@@ -51,16 +72,10 @@ function createModal(employee) {
   let bday = new Date(employee.dob.date);
   let formattedBday = `${(bday.getMonth() + 1)}/${bday.getDate()}/${bday.getFullYear()}`;
 
-  //Function to replace dash in phone number with a space
-  //Found via google search here: http://www.openjs.com/scripts/strings/setcharat_function.php
-  function setCharAt(str,index,chr) {
-    if(index > str.length-1) return str;
-    return str.substr(0,index) + chr + str.substr(index+1);
-  }
-
-  //format the employee's phone number using function above 
+  //Format the employee's phone number 
+  //Adapted code from this source: http://www.openjs.com/scripts/strings/setcharat_function.php
   let cell = `${employee.cell}`;
-  formattedCell = setCharAt(cell, 5, ' ');
+  formattedCell = cell.substring(0,5) + ' ' + cell.substring(6); //separates the default cell into 2 strings with a space between
 
   //create modal HTML with employee info
   const modalHTML = `
@@ -84,7 +99,7 @@ function createModal(employee) {
   modalDiv.innerHTML =modalHTML;
   gallery.insertAdjacentElement('afterend', modalDiv);
 
-  //Listen for clicks to close modal
+  //Listen for clicks to close the modal
   document.getElementById('modal-close-btn').addEventListener('click', () => {
     modalDiv.style.display = 'none';
   });
@@ -92,33 +107,30 @@ function createModal(employee) {
 }
 
 
-//Show modal function
-function showModal(array) {
-  for (let i = 0; i < gallery.children.length; i++) {
-    gallery.children[i].addEventListener('click', (event) => {
-      createModal(array[i]);
-    });
-  }
-}
-
 //Search function
 function search(text) {
+  //Clear the current displayed gallery of employees
   gallery.innerHTML = '';
+  //Make a placeholder variable for the search results
   let searchResults = [];
+  //For each employee that was returned earlier, make a lower case name and see if it matches the search input
   employeeData.forEach(employee => {
     let name = `${employee.name.first} ${employee.name.last}`;
     let lowerCaseName = name.toLowerCase();
     let lowerCaseSearch = text.toLowerCase();
+    //If there's a match, add the employee to the searchResults array
     if (lowerCaseName.includes(lowerCaseSearch)) {
       searchResults.push(employee);
     }
   });
+  //Create a new gallery based on search results
   createGallery(searchResults);
-  showModal(searchResults)
+  //Add event listeners to the new search results so modal shows when clicked 
+  showModal(searchResults);
 }
 
 
-//Listen for searches
+//Listen for search events
 document.getElementById('search-input').addEventListener('keyup', (event) => {
   search(event.target.value);
 });
