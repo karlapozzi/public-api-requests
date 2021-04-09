@@ -19,7 +19,7 @@ fetch(randomUserAPI)
   .then(data => {
     employeeData = data.results;
     createGallery(employeeData);
-    createModals(employeeData);
+    showModal(employeeData);
   })
 
 //Create gallery
@@ -35,13 +35,13 @@ function createGallery(array) {
           <p class="card-text cap">${employee.location.city}, ${employee.location.state}</p>
       </div>
     </div>
-  `);
+  `).join('');
   gallery.insertAdjacentHTML('beforeend', galleryHTML);
 }
 
 //Create modals
-function createModals(array) {
-  const modalsHTML = array.map(employee => `
+function createModal(employee) {
+  const modalHTML = `
     <div class="modal-container">
       <div class="modal">
         <button type="button" id="modal-close-btn" class="modal-close-btn"><strong>X</strong></button>
@@ -52,18 +52,25 @@ function createModals(array) {
             <p class="modal-text cap">${employee.location.city}</p>
             <hr>
             <p class="modal-text">${employee.cell}</p>
-            <p class="modal-text">${employee.location.street}, ${employee.location.city}, ${employee.location.state} ${employee.location.postcode}</p>
+            <p class="modal-text">${employee.location.street.number} ${employee.location.street.name}, 
+                ${employee.location.city}, ${employee.location.state} ${employee.location.postcode}</p>
             <p class="modal-text">Birthday: ${employee.dob.date}</p>
           </div>
       </div>
     </div>
-  `);
+  `;
+  gallery.insertAdjacentHTML('beforeend', modalHTML);
 }
 
-//Show modal
-// if (card name === name) {
-//   show modal-container where name === name
-// }
+//Show modal function
+function showModal(array) {
+  for (let i = 0; i < gallery.children.length; i++) {
+    gallery.children[i].addEventListener('click', (event) => {
+      console.log(array[i]);
+      createModal(array[i]);
+    });
+  }
+}
 
 //Search function
 function search(text) {
@@ -78,17 +85,19 @@ function search(text) {
     }
   });
   createGallery(searchResults);
+  showModal(searchResults)
 }
 
-//Listen for clicks on employees
 
-// document.addEventListener('click', (event) => {
-//   if (event.target.className.includes('card')) {
-//     //showModal();
-//   }
-// })
-
-
+//Listen for searches
 document.getElementById('search-input').addEventListener('keyup', (event) => {
   search(event.target.value);
+});
+
+//Listen for clicks to close modal
+document.getElementsByClassName('modal')[0].addEventListener('click', (event) => {
+  if (event.target.tagName === 'BUTTON') {
+    console.log('button clicked');
+    console.log(event.target);
+  }
 });
