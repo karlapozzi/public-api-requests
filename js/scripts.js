@@ -2,7 +2,7 @@
 const searchContainer = document.getElementsByClassName('search-container')[0];
 const gallery = document.getElementsByClassName('gallery')[0];
 const randomUserAPI = `https://randomuser.me/api/?results=12&nat=US`;
-let employeeCards = '';
+let employeeData = [];
 
 //Add search element
 const searchHTML = `
@@ -17,10 +17,9 @@ searchContainer.insertAdjacentHTML('beforeend', searchHTML);
 fetch(randomUserAPI)
   .then(response => response.json())
   .then(data => {
-    createGallery(data.results);
-    createModals(data.results);
-    employeeCards = document.getElementsByClassName('card');
-    
+    employeeData = data.results;
+    createGallery(employeeData);
+    createModals(employeeData);
   })
 
 //Create gallery
@@ -66,6 +65,21 @@ function createModals(array) {
 //   show modal-container where name === name
 // }
 
+//Search function
+function search(text) {
+  gallery.innerHTML = '';
+  let searchResults = [];
+  employeeData.forEach(employee => {
+    let name = `${employee.name.first} ${employee.name.last}`;
+    let lowerCaseName = name.toLowerCase();
+    let lowerCaseSearch = text.toLowerCase();
+    if (lowerCaseName.includes(lowerCaseSearch)) {
+      searchResults.push(employee);
+    }
+  });
+  createGallery(searchResults);
+}
+
 //Listen for clicks on employees
 
 // document.addEventListener('click', (event) => {
@@ -74,3 +88,7 @@ function createModals(array) {
 //   }
 // })
 
+
+document.getElementById('search-input').addEventListener('keyup', (event) => {
+  search(event.target.value);
+});
