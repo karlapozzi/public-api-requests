@@ -33,6 +33,14 @@ fetch(randomUserAPI)
     //Add event listeners to the gallery elements, using the same array, so corresponding modal shows when clicked 
     showModal(employeeData);
   })
+  //Handle errors
+  .catch (error => alert(
+    `There was a problem getting Employee data:
+    ${error}.
+      
+    Please try again later.`
+    ))
+
 
 //Create gallery
 function createGallery(array) {
