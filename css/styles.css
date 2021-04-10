@@ -28,10 +28,19 @@ header {
     margin: auto;
 }
 
+.header-text-container {
+    padding: 10px;
+}
+
 header h1 {
-    font-size: 1.25em;
+    font-size: 2em;
     color: rgba(50, 50, 50, 0.9);
     margin-top: 35px;
+    font-family: 'Train One', cursive;
+}
+
+.search-container {
+  padding: 20px;
 }
 
 .search-input {
