@@ -58,13 +58,14 @@ function showModal(array) {
     //Add event listener to each gallery element 
     gallery.children[i].addEventListener('click', () => {
       //Create corresponding modal when gallery item is clicked 
-      createModal(array[i]);
+      createModal(array[i], i, array);
     });
+
   }
 }
 
 //Create modal (called in the showModal function)
-function createModal(employee) {
+function createModal(employee, i, array) {
   //show the hidden modal div
   modalDiv.style.display = 'flex';
 
@@ -92,6 +93,10 @@ function createModal(employee) {
               ${employee.location.city}, ${employee.location.state} ${employee.location.postcode}</p>
           <p class="modal-text">Birthday: ${formattedBday}</p>
         </div>
+        <div class="modal-btn-container">
+          <button type="button" id="modal-prev" class="modal-prev btn">Prev</button>
+          <button type="button" id="modal-next" class="modal-next btn">Next</button>
+        </div>
     </div>
   `;
 
@@ -99,9 +104,32 @@ function createModal(employee) {
   modalDiv.innerHTML =modalHTML;
   gallery.insertAdjacentElement('afterend', modalDiv);
 
+  //Hide previous button if the first employee is shown 
+  if (i === 0){
+    document.getElementById('modal-prev').disabled = true;
+  } else {
+    document.getElementById('modal-prev').disabled = false;
+  }
+  //Hide next button if the last employee is shown
+  if (i === (array.length - 1)){
+    document.getElementById('modal-next').disabled = true;
+  } else {
+    document.getElementById('modal-next').disabled = false;
+  }
+
   //Listen for clicks to close the modal
   document.getElementById('modal-close-btn').addEventListener('click', () => {
     modalDiv.style.display = 'none';
+  });
+
+  //Listen for clicks on previous modal button
+  document.getElementById('modal-prev').addEventListener('click', () => {
+    createModal(array[i-1], (i-1), array);
+  });
+  
+  //Listen for clicks on the next modal button
+  document.getElementById('modal-next').addEventListener('click', () => {
+    createModal(array[i+1], (i+1), array);
   });
 
 }
