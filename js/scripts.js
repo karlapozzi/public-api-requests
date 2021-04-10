@@ -163,10 +163,21 @@ function search(text) {
   createGallery(searchResults);
   //Add event listeners to the new search results so modal shows when clicked 
   showModal(searchResults);
+  //Add no results message
+  if (searchResults.length === 0) {
+    gallery.innerHTML = `
+      <h1>Sorry, no results found.</h1>
+    `;
+  }  
 }
 
 
 //Listen for search events
 document.getElementById('search-input').addEventListener('keyup', (event) => {
+  search(event.target.value);
+});
+//Another search event handler
+//This listens for actions like clicking the x to clear the search field
+document.getElementById('search-input').addEventListener('search', (event) => {
   search(event.target.value);
 });
