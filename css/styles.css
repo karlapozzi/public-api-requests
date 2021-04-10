@@ -186,11 +186,9 @@ header h1 {
     justify-content: space-evenly;
     width: 95%;
     max-width: 420px;
-    padding: 10px 15px 15px;;
+    padding: 15px 15px 15px;;
     margin: 10px auto auto;
     background: rgba(255, 255, 255, 1);
-    border-radius: 0.25em;
-    border: 1px solid rgba(100, 100, 100, 0.3);
 }
 
 
@@ -202,6 +200,19 @@ header h1 {
     color: rgba(255, 255, 255, 0.9);
     padding: 0.75em 1.5em;
     background: rgba(0, 0, 0, 0.8);
+    border-radius: 0.35em;
+    transition: .4s ease-out;
+    outline: none;
+  }
+
+  .modal-btn-container .btn:disabled {
+    display: inline-block;
+    cursor: not-allowed;
+    font-size: 0.85em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.9);
+    padding: 0.75em 1.5em;
+    background: rgba(117, 115, 115, 0.8);
     border-radius: 0.35em;
     transition: .4s ease-out;
     outline: none;

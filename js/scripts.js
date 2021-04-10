@@ -177,7 +177,7 @@ document.getElementById('search-input').addEventListener('keyup', (event) => {
   search(event.target.value);
 });
 //Another search event handler
-//This listens for actions like clicking the x to clear the search field
+//This listens for actions like clicking the x to clear the search field in Chrome
 document.getElementById('search-input').addEventListener('search', (event) => {
   search(event.target.value);
 });
