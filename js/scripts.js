@@ -166,7 +166,7 @@ function search(text) {
   //Add no results message
   if (searchResults.length === 0) {
     gallery.innerHTML = `
-      <h1>Sorry, no results found.</h1>
+      <h1 class="no-results"><em>Sorry, no results found.</em></h1>
     `;
   }  
 }
