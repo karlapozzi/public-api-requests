@@ -1,27 +1,21 @@
-//VARIABLES 
-//DOM elements I need to point to 
+//VARIABLES
+//Declare variables
 const searchContainer = document.getElementsByClassName('search-container')[0];
 const gallery = document.getElementsByClassName('gallery')[0];
-const randomUserAPI = `https://randomuser.me/api/?results=12&nat=US`; //12 results + US format so search works
-//Create a div for the modal
+//URL params specify 12 results + US format for consistent name and location format 
+const randomUserAPI = `https://randomuser.me/api/?results=12&nat=US`;
+//Create a hidden div for the modal
 const modalDiv = document.createElement('div');
 modalDiv.className = 'modal-container';
 modalDiv.style.display = 'none';
-//A placeholder for the data that will be returned 
+//Set a placeholder for the data that will be returned 
 let employeeData = [];
 
 
-//Add search element
-const searchHTML = `
-  <form action="#" method="get">
-    <input type="search" id="search-input" class="search-input" placeholder="Search...">
-    <input type="submit" value="&#x1F50D;" id="search-submit" class="search-submit">
-  </form>
-`;
-searchContainer.insertAdjacentHTML('beforeend', searchHTML);
 
 
-//Get employee info 
+//EMPLOYEE DIRECTORY
+//Get employee info from API
 fetch(randomUserAPI)
   //Convert data to JSON
   .then(response => response.json())
@@ -30,7 +24,7 @@ fetch(randomUserAPI)
     employeeData = data.results;
     //Create initial gallery of employees
     createGallery(employeeData);
-    //Add event listeners to the gallery elements, using the same array, so corresponding modal shows when clicked 
+    //Add event listeners to the gallery elements, using the same array 
     showModal(employeeData);
   })
   //Handle errors
@@ -60,6 +54,7 @@ function createGallery(array) {
   gallery.insertAdjacentHTML('beforeend', galleryHTML);
 }
 
+
 //Show modal function
 function showModal(array) {
   for (let i = 0; i < gallery.children.length; i++) {
@@ -72,8 +67,9 @@ function showModal(array) {
   }
 }
 
-//Create modal (called in the showModal function)
-function createModal(employee, i, array) {
+
+//Create modal for an employee (called in the showModal function)
+function createModal(employee, index, array) {
   //show the hidden modal div
   modalDiv.style.display = 'flex';
 
@@ -83,8 +79,9 @@ function createModal(employee, i, array) {
 
   //Format the employee's phone number 
   //Adapted code from this source: http://www.openjs.com/scripts/strings/setcharat_function.php
+  //The substring method separates the default cell into 2 strings with a space between
   let cell = `${employee.cell}`;
-  formattedCell = cell.substring(0,5) + ' ' + cell.substring(6); //separates the default cell into 2 strings with a space between
+  formattedCell = cell.substring(0,5) + ' ' + cell.substring(6);
 
   //create modal HTML with employee info
   const modalHTML = `
@@ -112,40 +109,56 @@ function createModal(employee, i, array) {
   modalDiv.innerHTML =modalHTML;
   gallery.insertAdjacentElement('afterend', modalDiv);
 
-  //Hide previous button if the first employee is shown 
-  if (i === 0){
-    document.getElementById('modal-prev').disabled = true;
-  } else {
-    document.getElementById('modal-prev').disabled = false;
-  }
-  //Hide next button if the last employee is shown
-  if (i === (array.length - 1)){
-    document.getElementById('modal-next').disabled = true;
-  } else {
-    document.getElementById('modal-next').disabled = false;
-  }
+  //Call function to handle prev, next, and close buttons within the modal 
+  handleModalButtons(index, array);
+}
 
-  //Listen for clicks to close the modal
-  document.getElementById('modal-close-btn').addEventListener('click', () => {
-    modalDiv.style.display = 'none';
-  });
 
-  //Listen for clicks on previous modal button
-  document.getElementById('modal-prev').addEventListener('click', () => {
-    createModal(array[i-1], (i-1), array);
+//Handle button clicks within the modal 
+function handleModalButtons (index, array) {
+  //Declare button variables
+  const prevButton = document.getElementById('modal-prev');
+  const nextButton = document.getElementById('modal-next');
+  const closeButton = document.getElementById('modal-close-btn');
+    
+  //Hide previous or next button if the first or last employee is shown 
+  prevButton.disabled = (index === 0)? true : false;
+  nextButton.disabled = (index === array.length - 1)? true: false;
+
+  //Listen for clicks on previous button
+  prevButton.addEventListener('click', () => {
+    //Index - 1 identifies the previous employee
+    createModal(array[index-1], (index-1), array);
   });
   
-  //Listen for clicks on the next modal button
-  document.getElementById('modal-next').addEventListener('click', () => {
-    createModal(array[i+1], (i+1), array);
+  //Listen for clicks on the next button
+  nextButton.addEventListener('click', () => {
+    //Index + 1 identifies the next employee
+    createModal(array[index+1], (index+1), array);
   });
 
+  //Listen for clicks to close the modal
+  closeButton.addEventListener('click', () => {
+    modalDiv.style.display = 'none';
+  });
 }
+
+
+
+//SEARCH
+//Display search element
+const searchHTML = `
+  <form action="#" method="get">
+    <input type="search" id="search-input" class="search-input" placeholder="Search...">
+    <input type="submit" value="&#x1F50D;" id="search-submit" class="search-submit">
+  </form>
+`;
+searchContainer.insertAdjacentHTML('beforeend', searchHTML);
 
 
 //Search function
 function search(text) {
-  //Clear the current displayed gallery of employees
+  //Clear the currently displayed gallery of employees
   gallery.innerHTML = '';
   //Make a placeholder variable for the search results
   let searchResults = [];
@@ -161,7 +174,7 @@ function search(text) {
   });
   //Create a new gallery based on search results
   createGallery(searchResults);
-  //Add event listeners to the new search results so modal shows when clicked 
+  //Add ability to show modals for search results 
   showModal(searchResults);
   //Add no results message
   if (searchResults.length === 0) {
@@ -172,12 +185,12 @@ function search(text) {
 }
 
 
-//Listen for search events
+//Search event handlers
+//Listen for typing within search input
 document.getElementById('search-input').addEventListener('keyup', (event) => {
   search(event.target.value);
 });
-//Another search event handler
-//This listens for actions like clicking the x to clear the search field in Chrome
+//Listen for actions like clicking the x to clear the search field in Chrome
 document.getElementById('search-input').addEventListener('search', (event) => {
   search(event.target.value);
 });
